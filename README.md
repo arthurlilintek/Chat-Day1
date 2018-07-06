@@ -1,4 +1,5 @@
-#Chat Agenda
+
+# Chat Project Agenda
 1. UI, Firebase Authentication, Icon
 2. Firebase Database
 3. Firebase Storage
@@ -7,9 +8,10 @@
 6. Firebase Cloud Messaging
 7. AdMob
 8. Deployment
+9. Remote Config
+10. Crash Analysis
 
-
-# Chat-Day1
+#day1
 1. 建立Android專案 (選定專案的package名稱)
 2. 在firebase console 新增專案 chat
 3. 在 專案中加入 android 應用程式，提供 package名稱
