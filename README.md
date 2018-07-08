@@ -24,3 +24,33 @@
 10. 測試畫面是否正常
 11. 加入 Google 驗證功能 (登入/登出)
 12. 提供不同語系顯示文字內容
+
+#day2
+1. 建立PracticeMessage.java
+2. 在專案中加入Realtime Database功能
+3. 發出訊息
+4. 接收訊息
+
+#day3
+1. 在專案中加入Storage功能
+2. 加入貼圖功能
+3. 加入show圖功能
+4. 使用Cloud Function加入影像處理
+
+#day4
+1. Firebase Cloud Messaging
+
+#day5
+1. AdMob
+2. Deployment
+
+#day6
+1. Remote Config
+2. Crash Analysis
+
+#day7
+1. Firebase Hosting
+
+#day8
+1. Send Install Invites
+2. Track User Flows
