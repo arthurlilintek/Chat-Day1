@@ -297,12 +297,12 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = mFirebaseAdapter.getItemCount();
+                int messageCount = mFirebaseAdapter.getItemCount();
                 int lastVisiblePosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
                 // If the recycler view is initially being loaded or the user is at the bottom of the list, scroll
                 // to the bottom of the list to show the newly added message.
                 if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) && lastVisiblePosition == (positionStart - 1))) {
+                        (positionStart >= (messageCount - 1) && lastVisiblePosition == (positionStart - 1))) {
                     mMessageRecyclerView.scrollToPosition(positionStart);
                 }
             }
@@ -544,12 +544,12 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-                int friendlyMessageCount = mFirebaseAdapter.getItemCount();
+                int messageCount = mFirebaseAdapter.getItemCount();
                 int lastVisiblePosition = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
                 // If the recycler view is initially being loaded or the user is at the bottom of the list, scroll
                 // to the bottom of the list to show the newly added message.
                 if (lastVisiblePosition == -1 ||
-                        (positionStart >= (friendlyMessageCount - 1) && lastVisiblePosition == (positionStart - 1))) {
+                        (positionStart >= (messageCount - 1) && lastVisiblePosition == (positionStart - 1))) {
                     mMessageRecyclerView.scrollToPosition(positionStart);
                 }
             }
@@ -584,9 +584,9 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PracticeMessage friendlyMessage = new PracticeMessage(mMessageEditText.getText().toString(), mUsername,
+                PracticeMessage message = new PracticeMessage(mMessageEditText.getText().toString(), mUsername,
                         mPhotoUrl, null);
-                mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(friendlyMessage);
+                mFirebaseDatabaseReference.child(MESSAGES_CHILD).push().setValue(message);
                 mMessageEditText.setText("");
 
             }
