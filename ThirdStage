@@ -1,4 +1,4 @@
-package com.lilintek.chat;
+====================================Amend MainActivity=====================================================
 
 import android.content.Intent;
 import android.net.Uri;
@@ -388,3 +388,63 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
     }
 
 }
+
+
+==================================Cloud Function===========================================
+Install the Firebase Command Line Interface
+The Firebase Command Line Interface (CLI) will allow you to serve the web app locally and deploy your web app and Cloud Functions.
+
+To install the CLI you need to have installed npm which typically comes with NodeJS.
+
+To install or upgrade the CLI run the following npm command:
+
+npm -g install firebase-tools
+Doesn't work? You may need to change npm permissions.
+
+To verify that the CLI has been installed correctly, open a console and run:
+
+firebase --version
+Make sure the version of the Firebase CLI is above 3.5.0 so that it has all the latest features required for Cloud Functions. If not, run npm install -g firebase-tools to upgrade as shown above.
+
+Authorize the Firebase CLI by running:
+
+firebase login
+Make sure you are in the cloud-functions-start directory then set up the Firebase CLI to use your Firebase Project:
+
+firebase use --add
+Then select your Project ID and follow the instructions. When prompted, you can choose any Alias, such as codelab for instance.
+
+loud Functions allows you to easily have code that runs in the Cloud without having to setup a server. We'll be showing you how to build functions that react to Firebase Auth, Cloud Storage and Firebase Realtime Database events. Let's start with Auth.
+
+When using the Firebase SDK for Cloud Functions, your Functions code will live under the functions directory (by default). Your Functions code is also a Node.js app and therefore needs a package.json that gives some information about your app and lists dependencies.
+
+To make it easier for you we've already created the functions/index.js file where your code will go. Feel free to inspect this file before moving forward.
+
+cd functions
+ls
+If you are not familiar with Node.js it will help to learn more about it before continuing the codelab.
+
+The package.json file already lists two required dependencies: the Firebase SDK for Cloud Functions and the Firebase Admin SDK. To install them locally run npm install from the functions folder:
+
+npm install
+Let's now have a look at the index.js file:
+
+
+index.js
+// Adds a message that welcomes new users into the chat.
+exports.addWelcomeMessages = functions.auth.user().onCreate((user) => {
+  console.log('A new user signed in for the first time.');
+  const fullName = user.displayName || 'Anonymous';
+
+  // Saves the new welcome message into the database
+  // which then displays it in the FriendlyChat clients.
+  return admin.database().ref('messages').push({
+    name: 'Firebase Bot',
+    profilePicUrl: '/images/firebase-logo.png', // Firebase logo
+    text: `${fullName} signed in for the first time! Welcome!`, // Using back-ticks.
+  }).then(() => {
+    console.log('Welcome message written to database.');
+  });
+});
+
+firebase deploy --only functions
