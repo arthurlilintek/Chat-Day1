@@ -1,0 +1,252 @@
+==========================MyFirebaseInstanceIdService===============================
+import android.util.Log;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
+
+    private static final String TAG = "MyFirebaseIIDService";
+    private static final String PRACTICE_ENGAGE_TOPIC = "practice_engage";
+
+    /**
+     * The Application's current Instance ID token is no longer valid and thus a new one must be requested.
+     */
+    @Override
+    public void onTokenRefresh() {
+        // If you need to handle the generation of a token, initially or after a refresh this is
+        // where you should do that.
+        String token = FirebaseInstanceId.getInstance().getToken();
+        Log.d(TAG, "FCM Token: " + token);
+
+        // Once a token is generated, we subscribe to topic.
+        FirebaseMessaging.getInstance().subscribeToTopic(PRACTICE_ENGAGE_TOPIC);
+    }
+}
+
+
+=========================MyFirebaseMessagingService===================================
+
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+import static com.lilintek.chat.BadgeUtil.setBadge;
+
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    private static final String TAG = "MyFMService";
+    String title="";
+    int badge=0;
+    int notify_no=0;
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        //for data payload
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            title = remoteMessage.getData().get("title");
+            sendNotification(remoteMessage.getData().get("body"), title);
+            badge = Integer.parseInt(remoteMessage.getData().get("badge"));
+            Log.e("notificationNUmber", ":" + badge);
+            setBadge(getApplicationContext(), badge);
+
+        }
+        //for notification payload so I did not use here
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            Log.d(TAG, "FCM Message Id: " + remoteMessage.getMessageId());
+            Log.d(TAG, "FCM Notification Message: " + remoteMessage.getNotification());
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Log.d(TAG, "FCM Data Message: " + remoteMessage.getData());
+        }
+
+        // Also if you intend on generating your own notifications as a result of a received FCM
+        // message, here is where that should be initiated. See sendNotification method below.
+    }
+// [END receive_message]
+
+    private void sendNotification(String messageBody, String title) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, notify_no /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+        if (notify_no < 9) {
+            notify_no = notify_no + 1;
+        } else {
+            notify_no = 0;
+        }
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(notify_no + 2 /* ID of notification */, notificationBuilder.build());
+    }
+}
+
+=====================BadgeUtil==========================================================================
+package com.lilintek.chat;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+
+import java.util.List;
+
+public class BadgeUtil {
+    public static void setBadge(Context context, int count) {
+        setBadgeSamsung(context, count);
+        setBadgeSony(context, count);
+
+    }
+
+    public static void clearBadge(Context context) {
+        setBadgeSamsung(context, 0);
+        clearBadgeSony(context);
+    }
+
+
+    private static void setBadgeSamsung(Context context, int count) {
+        String launcherClassName = getLauncherClassName(context);
+        if (launcherClassName == null) {
+            return;
+        }
+        Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+        intent.putExtra("badge_count", count);
+        intent.putExtra("badge_count_package_name", context.getPackageName());
+        intent.putExtra("badge_count_class_name", launcherClassName);
+        context.sendBroadcast(intent);
+    }
+
+    private static void setBadgeSony(Context context, int count) {
+        String launcherClassName = getLauncherClassName(context);
+        if (launcherClassName == null) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.setAction("com.sonyericsson.home.action.UPDATE_BADGE");
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.ACTIVITY_NAME", launcherClassName);
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.SHOW_MESSAGE", true);
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.MESSAGE", String.valueOf(count));
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME"   , context.getPackageName());
+         context.sendBroadcast(intent);
+    }
+
+
+    private static void clearBadgeSony(Context context) {
+        String launcherClassName = getLauncherClassName(context);
+        if (launcherClassName == null) {
+            return;
+        }
+
+        Intent intent = new Intent();
+        intent.setAction("com.sonyericsson.home.action.UPDATE_BADGE");
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.ACTIVITY_NAME" , launcherClassName);
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.SHOW_MESSAGE", false);
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.MESSAGE", String.valueOf(0));
+        intent.putExtra("com.sonyericsson.home.intent.extra.badge.PACKAGE_NAME", context.getPackageName());
+        context.sendBroadcast(intent);
+    }
+
+    private static String getLauncherClassName(Context context)
+    {
+
+        PackageManager pm = context.getPackageManager();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
+        for (ResolveInfo resolveInfo : resolveInfos) {
+            String pkgName = resolveInfo.activityInfo.applicationInfo.packageName;
+            if (pkgName.equalsIgnoreCase(context.getPackageName())) {
+                String className = resolveInfo.activityInfo.name;
+                return className;
+            }
+        }
+        return null;
+    }
+}
+
+=============================BootCompletedIntentReceiver======================================
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+
+public class BootCompletedIntentReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+            Intent pushIntent = new Intent(context, MyFirebaseMessagingService.class);
+            context.startService(pushIntent);
+        }
+    }
+}
+
+===========================AndroidManifest.xml==============================================
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lilintek.chat">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SignInActivity" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".MyFirebaseInstanceIdService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".BootCompletedIntentReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
+
