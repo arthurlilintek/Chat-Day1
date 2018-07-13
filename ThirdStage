@@ -427,7 +427,7 @@ If you are not familiar with Node.js it will help to learn more about it before 
 The package.json file already lists two required dependencies: the Firebase SDK for Cloud Functions and the Firebase Admin SDK. To install them locally run npm install from the functions folder:
 
 npm install
-if install not works, run >npm init< and then run >npm install<
+if install not works, run >firebase init< and then run >npm install<
 
 Let's now have a look at the index.js file:
 
