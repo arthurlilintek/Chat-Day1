@@ -12,32 +12,27 @@ Add ads namespace
 Verify that the ads namespace is in the root RelativeLayout tag in the activity_main.xml file.
 
 ===============================activity_main.xml================================================
-<RelativeLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:tools="http://schemas.android.com/tools"
-   xmlns:ads="http://schemas.android.com/apk/res-auto"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent"
-   android:paddingBottom="@dimen/activity_vertical_margin"
-   android:paddingLeft="@dimen/activity_horizontal_margin"
-   android:paddingRight="@dimen/activity_horizontal_margin"
-   android:paddingTop="@dimen/activity_vertical_margin"
-   tools:context="com.google.firebase.codelab.friendlychat.MainActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
    
    
 Add AdView to main layout
 Include the view that will contain the ad. In your activity_main.xml file inside the root RelativeLayout add the following AdView tag.
 
 ====================================activity_main.xml=================================================
-<com.google.android.gms.ads.AdView
-   android:id="@+id/adView"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   android:layout_centerHorizontal="true"
-   android:layout_alignParentTop="true"
-   ads:adSize="BANNER"
-   ads:adUnitId="@string/banner_ad_unit_id">
-</com.google.android.gms.ads.AdView>
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_unit_id">
+    </com.google.android.gms.ads.AdView>
 
 
 Update RecyclerView element to be laid out below the AdView, RecyclerView should now look like this:
