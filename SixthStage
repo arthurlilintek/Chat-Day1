@@ -87,17 +87,59 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
 
 }
 
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.invite_menu:
+                Log.w("Invite", "Invite button clicked");
+                return true;
+            case R.id.crash_menu:
+                Log.w("Crashlytics", "Crash button clicked");
+                return true;
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                mFirebaseUser = null;
+                mUsername = ANONYMOUS;
+                mPhotoUrl = null;
+                startActivity(new Intent(this, SignInActivity.class));
+                finish();
+                return true;
+            case R.id.fresh_config_menu:
+                fetchConfig();
+                Log.w("Fresh", "Fresh button clicked");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 =============================Amend MainActivity to add invite feature===================================
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.invite_menu:
-                sendInvitation();                
+                sendInvitation();
                 Log.w("Invite", "Invite button clicked");
                 return true;
             case R.id.crash_menu:
-            
-            
+                Log.w("Crashlytics", "Crash button clicked");
+                return true;
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                mFirebaseUser = null;
+                mUsername = ANONYMOUS;
+                mPhotoUrl = null;
+                startActivity(new Intent(this, SignInActivity.class));
+                finish();
+                return true;
+            case R.id.fresh_config_menu:
+                fetchConfig();
+                Log.w("Fresh", "Fresh button clicked");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
