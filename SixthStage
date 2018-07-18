@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
         fetchConfig();
     }
 //================================== send messge=====================================
+        mMessageEditText = (EditText) findViewById(R.id.messageEditText);
+        //mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(DEFAULT_MSG_LENGTH_LIMIT)});
+        mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(mSharedPreferences
+                .getInt(MyPreferences.MSG_LENGTH, DEFAULT_MSG_LENGTH_LIMIT))});        
+
 
     // Fetch the config to determine the allowed length of messages.
     public void fetchConfig() {
@@ -112,6 +117,22 @@ public class MainActivity extends AppCompatActivity  implements  GoogleApiClient
                 return super.onOptionsItemSelected(item);
         }
     }
+    
+=============================Add MyPreferences.java====================================================
+package com.lilintek.chatgjun;
+
+public class MyPreferences {
+
+    public static final String INSTANCE_ID_TOKEN_RETRIEVED = "iid_token_retrieved";
+    public static final String MSG_LENGTH = "msg_length";
+
+}
+
+
+
+
+
+
 =============================Amend MainActivity to add invite feature===================================
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
