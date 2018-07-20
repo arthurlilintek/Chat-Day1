@@ -49,11 +49,12 @@
 2. Send Install Invites
 
 #day7
-1. Firebase Hosting
-
-#day8
 1. Track User Flows
 2. Crash Analysis
+3. Test Lab
+
+#day8
+1. Firebase Hosting
 
 #day9
 1. Android Apps and ESP8266
